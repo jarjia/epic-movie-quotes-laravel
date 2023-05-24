@@ -31,14 +31,4 @@ class VerificationEmail extends Mailable
             ->subject(subject: 'Email Verification')
             ->view('mails.verify');
     }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
 }
