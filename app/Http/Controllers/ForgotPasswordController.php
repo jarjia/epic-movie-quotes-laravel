@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequests\PasswordEmailRecoverRequest;
+use App\Http\Requests\AuthRequests\PasswordRecoverRequest;
 use App\Mail\PasswordRecoverMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordController extends Controller
 {
-    public function sendEmail(Request $request): JsonResponse
+    public function sendEmail(PasswordEmailRecoverRequest $request): JsonResponse
     {
         $request->validate([
             'email' => 'required'
@@ -23,7 +25,7 @@ class ForgotPasswordController extends Controller
 
         return response()->json(['message' => 'Password recover email sent successfuly!']);
     }
-    public function reset(Request $request): JsonResponse
+    public function reset(PasswordRecoverRequest $request): JsonResponse
     {
         $request->validate([
             'email' => 'required',

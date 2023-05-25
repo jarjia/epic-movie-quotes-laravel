@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequests\VerificationRequest;
 use App\Mail\VerificationEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class RegisterController extends Controller
         return response()->json(['message' => 'User registered successfully!'], 201);
     }
 
-    public function verify(Request $request): JsonResponse
+    public function verify(VerificationRequest $request): JsonResponse
     {
         $attributes = $request->validate([
             'email' => 'required',
