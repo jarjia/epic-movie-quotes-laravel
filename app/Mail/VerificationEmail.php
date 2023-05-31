@@ -16,7 +16,7 @@ class VerificationEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $user, public $token)
+    public function __construct(public $user, public $expires, public $token)
     {
     }
 

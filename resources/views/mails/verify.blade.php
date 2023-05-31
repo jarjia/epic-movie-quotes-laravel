@@ -10,40 +10,42 @@
             <div style="margin: auto; width: 10%; font-weight: bold;">
                 <x-svg-quote />              
             </div>
-            <div style="margin: auto; margin-top:2%; width: 18%; height:10%; color:#DDCCAA;">
+            <div style="margin: 0 auto 30px auto; margin-top:2%; width: 18%; height:10%; color:#DDCCAA;">
                 MOVIE QUOTES
             </div>
-            <div style="margin-left: 3%; width: 48%; height:10%">
-                Hola {{$user->name}}!
+            <div style="margin: 30px 3%; width: 48%; height:10%">
+                <span style="color: white;">Hola {{$user->name}}!</span>
             </div>
-            <div style="margin-left: 3%; width: 80%; height:10%;">
+            <div style="margin: 30px 3%; width: 80%; height:10%;">
                 <p style="color: white;">
                     Thanks for joining Movie quotes! We really appreciate it. Please click the button below to verify your account:
                 </p>
             </div>
-            <div style="margin-left: 3%;">
+            <div style="margin: 30px 3%">
                 <div>
                     <a style="background-color: #E31221; border-radius: 4px; padding: 10px 30px; text-decoration:none; color:white;" 
-                    href="{{config('app.front_url').'/?token='.$token.'&email='.$user->email}}">
+                    href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}">
                     Verify account</a>
                 </div>
             </div>
-            <div style="margin-left: 3%; width: 80%;">
+            <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
                     If clicking doesn't work, you can try copying and pasting it to your browser:
                 </p>
             </div>
-            <div style="margin-left: 3%; width: 80%; height: 20%;">
-                <p style="word-wrap: break-word; color:#DDCCAA;">
-                    {{config('app.front_url').'/?token='.$token.'&email='.$user->email}}
+            <div style="margin: 30px 3%; width: 80%; height: 20%;">
+                <p style="word-wrap: break-word;">
+                    <a href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}" style="color: #DDCCAA;">
+                        {{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}
+                    </a>
                 </p>
             </div>
-            <div style="margin-left:3%; width: 80%;">
+            <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    If you have any problems, please contact us: <span style="color: white;">support@moviequotes.ge</span>              
+                    If you have any problems, please contact us: <a href="#" style="cursor: default; text-decoration: none; color: white;">support@moviequotes.ge</a>              
                 </p>
             </div>
-            <div style="margin-left:3%; width: 80%;">
+            <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
                     MovieQuotes Crew                
                 </p>

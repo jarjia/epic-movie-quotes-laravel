@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthRequests\VerificationRequest;
 use App\Mail\VerificationEmail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
@@ -21,17 +22,19 @@ class RegisterController extends Controller
 
         $token = sha1($user->email);
 
-        Mail::to($user->email)->send(new VerificationEmail($user, $token));
+        $expires = now();
+
+        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+        $success['name'] =  $user->name;
+
+        Mail::to($user->email)->send(new VerificationEmail($user, $expires, $token));
 
         return response()->json(['message' => 'User registered successfully!'], 201);
     }
 
     public function verify(VerificationRequest $request): JsonResponse
     {
-        $attributes = $request->validate([
-            'email' => 'required',
-            'token' => 'required'
-        ]);
+        $attributes = $request->validated();
 
         $user = User::where('email', $attributes['email']);
 
