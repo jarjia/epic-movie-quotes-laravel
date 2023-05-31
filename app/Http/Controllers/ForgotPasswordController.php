@@ -16,8 +16,8 @@ class ForgotPasswordController extends Controller
     {
         $attributes = $request->validated();
 
-        $token = sha1($attributes->email);
-        $user = User::firstWhere('email', $attributes->email);
+        $token = sha1($attributes['email']);
+        $user = User::firstWhere('email', $attributes['email']);
         $expires = now();
 
         if ($user === null) {
@@ -32,10 +32,10 @@ class ForgotPasswordController extends Controller
     {
         $attributes = $request->validated();
 
-        $user = User::firstWhere('email', $attributes->email);
+        $user = User::firstWhere('email', $attributes['email']);
 
-        if (sha1($user->email) === $attributes->token) {
-            $user->password = $attributes->password;
+        if (sha1($user->email) === $attributes['token']) {
+            $user->password = $attributes['password'];
             $user->save();
         } else {
             return response()->json(['message' => 'Something went wrong!']);
