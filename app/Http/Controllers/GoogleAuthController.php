@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
 
 class GoogleAuthController extends Controller
 {
@@ -36,11 +33,6 @@ class GoogleAuthController extends Controller
 
         session()->regenerate();
 
-        $response = response('User Logged in', 200);
-
-        $response->cookie('laravel_session', session()->getId());
-        $response->cookie('XSRF-TOKEN', csrf_token());
-
-        return $response;
+        return response('User Logged in', 200);
     }
 }

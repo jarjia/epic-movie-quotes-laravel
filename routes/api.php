@@ -29,11 +29,11 @@ Route::group(['controller' => ForgotPasswordController::class, 'prefix' => '/rec
 });
 
 Route::group(['controller' => AuthController::class], function () {
-    Route::post('/login', 'log_in')->name('auth.login');
+    Route::post('/login', 'login')->name('auth.login');
 });
 
 Route::group(['middleware' => ['auth:sanctum'], 'controller' => AuthController::class], function () {
-    Route::get('/user', 'get_user_data')->name('auth.data');
+    Route::get('/user', 'user')->name('auth.data');
     Route::get('/logout', 'logout')->name('auth.logout');
 });
 

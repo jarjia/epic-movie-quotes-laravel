@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
-    public function log_in(Request $request)
+    public function login(Request $request)
     {
         $remember = $request->boolean('remember_me');
         $attributes = $request->only('password');
@@ -29,7 +26,7 @@ class AuthController extends Controller
         return response('User authentication failed, incorrect credentials', 401);
     }
 
-    public function get_user_data()
+    public function user()
     {
         return auth()->user();
     }
