@@ -14,29 +14,28 @@ class ForgotPasswordController extends Controller
 {
     public function sendEmail(PasswordEmailRecoverRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required'
-        ]);
+        $attributes = $request->validated();
 
-        $token = sha1($request->email);
-        $user = User::firstWhere('email', $request->email);
+        $token = sha1($attributes->email);
+        $user = User::firstWhere('email', $attributes->email);
+        $expires = now();
 
-        Mail::to($user->email)->send(new PasswordRecoverMail($user, $token));
+        if ($user === null) {
+            return response()->json('User with this email could not be found.', 401);
+        } else {
+            Mail::to($user->email)->send(new PasswordRecoverMail($user, $expires, $token));
 
-        return response()->json(['message' => 'Password recover email sent successfuly!']);
+            return response()->json(['message' => 'Password recover email sent successfuly!']);
+        }
     }
     public function reset(PasswordRecoverRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required',
-            'token' => 'required',
-            'password' => 'required'
-        ]);
+        $attributes = $request->validated();
 
-        $user = User::firstWhere('email', $request->email);
+        $user = User::firstWhere('email', $attributes->email);
 
-        if (sha1($user->email) === $request->token) {
-            $user->password = $request->password;
+        if (sha1($user->email) === $attributes->token) {
+            $user->password = $attributes->password;
             $user->save();
         } else {
             return response()->json(['message' => 'Something went wrong!']);
