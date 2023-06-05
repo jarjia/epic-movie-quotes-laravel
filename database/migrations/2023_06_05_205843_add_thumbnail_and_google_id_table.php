@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->string('thumbnail')->nullable();
             $table->string('google_id')->nullable();
         });
     }
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('google_id')->nullable();
+            $table->string('thumbnail')->nullable();
         });
     }
 };
