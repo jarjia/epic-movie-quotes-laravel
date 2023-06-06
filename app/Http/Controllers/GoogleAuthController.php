@@ -20,12 +20,16 @@ class GoogleAuthController extends Controller
             $user = User::Create([
                 'name' => $googleUser->name,
                 'email' => $googleUser->email,
+                'google_id' => $googleUser->getId(),
+                'thumbnail' => $googleUser->avatar
             ]);
 
             $user->email_verified_at = now();
             $user->save();
         } else {
             $user->name = $googleUser->name;
+            $user->google_id = $googleUser->getId();
+            $user->thumbnail = $googleUser->avatar;
             $user->save();
         }
 
@@ -33,6 +37,6 @@ class GoogleAuthController extends Controller
 
         session()->regenerate();
 
-        return response('User Logged in', 200);
+        return response('User logged in', 200);
     }
 }
