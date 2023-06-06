@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('google_id')->nullable();
-            $table->string('thumbnail')->nullable();
+            $table->dropColumn('thumbnail');
+            $table->dropColumn('google_id');
         });
     }
 };
