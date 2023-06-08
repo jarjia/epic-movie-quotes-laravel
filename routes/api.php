@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UpdateProfileController;
+use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -33,13 +36,20 @@ Route::group(['controller' => AuthController::class], function () {
     Route::post('/login', 'login')->name('auth.login');
 });
 
-Route::group(['middleware' => ['auth:sanctum'], 'controller' => AuthController::class], function () {
-    Route::get('/user', 'user')->name('auth.data');
-    Route::get('/logout', 'logout')->name('auth.logout');
-});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::group(['controller' => MovieController::class], function () {
+        Route::post('/movie/create', 'store')->name('create.movie');
+        Route::get('/movies', 'fetch')->name('fetch.movies');
+    });
 
-Route::group(['middleware' => ['auth:sanctum'], 'controller' => UpdateProfileController::class], function () {
-    Route::post('/profile/update', 'update')->name('profile.update');
+    Route::get('/genres', [GenresController::class, 'getGenres'])->name('get.genres');
+
+    Route::group(['controller' => AuthController::class], function () {
+        Route::get('/user', 'user')->name('auth.data');
+        Route::get('/logout', 'logout')->name('auth.logout');
+    });
+
+    Route::post('/profile/update', [UpdateProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::group(['prefix' => '/auth/google', 'controller' => GoogleAuthController::class], function () {

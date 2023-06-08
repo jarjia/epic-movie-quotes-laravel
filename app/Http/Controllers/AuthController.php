@@ -28,7 +28,23 @@ class AuthController extends Controller
 
     public function user()
     {
-        return auth()->user();
+        $user = auth()->user();
+        $userImage = '';
+        if (strpos($user->thumbnail, "http") === 0) {
+            $userImage = $user->thumbnail;
+        } else {
+            $userImage = asset('storage/' . $user->thumbnail);
+        }
+
+        $user = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'thumbnail' => $userImage,
+            'google_id' => $user->google_id
+        ];
+
+        return $user;
     }
 
     public function logout()
