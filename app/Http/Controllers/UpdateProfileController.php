@@ -17,9 +17,9 @@ class UpdateProfileController extends Controller
             $user->save();
         }
         if ($request->thumbnail !== null) {
-            $fileName = request()->file('thumbnail')->getClientOriginalName();
-            $filePath = request()->file('thumbnail')->storeAs('images', $fileName, 'public');
-            $user->thumbnail = config('app.url') . ':8000/storage/' . $filePath;
+            $file = request()->file('thumbnail')->store('images', 'public');
+            $thumbnailPath = config('app.url') . ':8000/storage/' . $file;
+            $user->thumbnail = $thumbnailPath;
             $user->save();
         }
         if ($request->password !== null) {

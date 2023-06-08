@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class MovieController extends Controller
 {
-    public function getGenres()
-    {
-        return Genre::select('id', 'genre')->get();
-    }
-
     public function store(Request $request)
     {
-        $fileName = request()->file('thumbnail')->getClientOriginalName();
-        $filePath = request()->file('thumbnail')->storeAs('images', $fileName, 'public');
-        $thumbnailPath = config('app.url') . ':8000/storage/' . $filePath;
+        $file = request()->file('thumbnail')->store('images', 'public');
+        $thumbnailPath = config('app.url') . ':8000/storage/' . $file;
 
         $movie = Movie::create([
             'movie' => $request->movie,
