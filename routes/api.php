@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\RegisterController;
@@ -37,10 +38,11 @@ Route::group(['controller' => AuthController::class], function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::group(['controller' => MovieController::class], function () {
-        Route::get('/genres', 'getGenres')->name('get.genres');
         Route::post('/movie/create', 'store')->name('create.movie');
         Route::get('/movies', 'fetch')->name('fetch.movies');
     });
+
+    Route::get('/genres', [GenresController::class, 'getGenres'])->name('get.genres');
 
     Route::group(['controller' => AuthController::class], function () {
         Route::get('/user', 'user')->name('auth.data');
