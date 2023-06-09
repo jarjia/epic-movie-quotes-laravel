@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
+use Dotenv\Util\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\App;
 
 class MovieController extends Controller
 {
     public function store(Request $request)
     {
+        App::setLocale($request->locale);
         $file = request()->file('thumbnail')->store('images', 'public');
 
         $movie = Movie::create([
@@ -27,11 +28,12 @@ class MovieController extends Controller
 
         $movie->genres()->sync($genres);
 
-        return response($movie, 201);
+        return response(__('response.movie_created'), 201);
     }
 
     public function fetch(Request $request): JsonResponse
     {
+        App::setLocale($request->locale);
         $search = $request->input('search');
         $movies = Movie::whereIn('user_id', [auth()->user()->id])
             ->where('movie->' . app()->getLocale(), 'like', '%' . $search . '%')

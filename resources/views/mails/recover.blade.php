@@ -14,23 +14,23 @@
                 MOVIE QUOTES
             </div>
             <div style="margin: 30px 3%; width: 48%; height:10%">
-                <span style="color: white;">Hola again {{$user->name}}!</span>
+                <span style="color: white;">{{__('mail.recover_hello')}} {{$user->name}}!</span>
             </div>
             <div style="margin: 30px 3%; width: 80%; height:10%;">
                 <p style="color: white;">
-                    You can recover your password by clicking this button:
+                   {{__('mail.recover_h1')}}
                 </p>
             </div>
             <div style="margin: 30px 3%">
                 <div>
                     <a style="background-color: #E31221; border-radius: 4px; padding: 10px 30px; text-decoration:none; color:white;" 
                     href="{{config('app.front_url').'/?recover_token='.$token.'&expires='.$expires.'&email='.$user->email}}">
-                    Recover password</a>
+                    {{__('mail.recover_button')}}</a>
                 </div>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    If clicking doesn't work, you can try copying and pasting it to your browser:
+                    {{__('mail.verify_h2')}}
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%; height: 20%;">
@@ -42,7 +42,7 @@
             </div>
             <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    If you have any problems, please contact us: <span style="color: white;">support@moviequotes.ge</span>              
+                    {{__('mail.verify_h3')}} <span style="color: white;">support@moviequotes.ge</span>              
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%;">

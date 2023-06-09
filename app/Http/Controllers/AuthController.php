@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        App::setLocale($request->locale);
         $remember = $request->boolean('remember_me');
         $attributes = $request->only('password');
         $usernameOrEmail = $request->input('user');
@@ -23,7 +25,7 @@ class AuthController extends Controller
             return response()->json(Auth::user(), 201);
         }
 
-        return response('User authentication failed, incorrect credentials', 401);
+        return response(__('response.user_login_error'), 401);
     }
 
     public function user()
@@ -33,7 +35,11 @@ class AuthController extends Controller
         if (strpos($user->thumbnail, "http") === 0) {
             $userImage = $user->thumbnail;
         } else {
-            $userImage = asset('storage/' . $user->thumbnail);
+            if ($user->thumbnail === null) {
+                $userImage = null;
+            } else {
+                $userImage = asset('storage/' . $user->thumbnail);
+            }
         }
 
         $user = [

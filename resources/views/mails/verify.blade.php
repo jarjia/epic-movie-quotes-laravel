@@ -14,23 +14,23 @@
                 MOVIE QUOTES
             </div>
             <div style="margin: 30px 3%; width: 48%; height:10%">
-                <span style="color: white;">Hola {{$user->name}}!</span>
+                <span style="color: white;">{{__('mail.hello')}} {{$user->name}}!</span>
             </div>
             <div style="margin: 30px 3%; width: 80%; height:10%;">
                 <p style="color: white;">
-                    Thanks for joining Movie quotes! We really appreciate it. Please click the button below to verify your account:
+                    {{__('mail.verify_h1')}}
                 </p>
             </div>
             <div style="margin: 30px 3%">
                 <div>
                     <a style="background-color: #E31221; border-radius: 4px; padding: 10px 30px; text-decoration:none; color:white;" 
                     href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}">
-                    Verify account</a>
+                    {{__('mail.verify_button')}}</a>
                 </div>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    If clicking doesn't work, you can try copying and pasting it to your browser:
+                    {{__('mail.verify_h2')}}
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%; height: 20%;">
@@ -42,7 +42,7 @@
             </div>
             <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    If you have any problems, please contact us: <a href="#" style="cursor: default; text-decoration: none; color: white;">support@moviequotes.ge</a>              
+                    {{__('mail.verify_h3')}} <a href="#" style="cursor: default; text-decoration: none; color: white;">support@moviequotes.ge</a>              
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
