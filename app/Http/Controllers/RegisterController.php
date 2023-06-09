@@ -8,12 +8,14 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
     public function store(Request $request): JsonResponse
     {
+        App::setLocale($request->locale);
         $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
@@ -29,11 +31,12 @@ class RegisterController extends Controller
 
         Mail::to($user->email)->send(new VerificationEmail($user, $expires, $token));
 
-        return response()->json(['message' => 'User registered successfully!'], 201);
+        return response()->json(['message' => __('response.user_registered')], 201);
     }
 
     public function verify(VerificationRequest $request): JsonResponse
     {
+        App::setLocale($request->locale);
         $attributes = $request->validated();
 
         $user = User::where('email', $attributes['email']);
@@ -46,6 +49,6 @@ class RegisterController extends Controller
             return response()->json('something went wrong!');
         }
 
-        return response()->json(['message' => 'Email verified successfully!'], 201);
+        return response()->json(['message' => __('response.user_verified')], 201);
     }
 }

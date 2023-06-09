@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -37,6 +38,6 @@ class GoogleAuthController extends Controller
 
         session()->regenerate();
 
-        return response('User logged in', 200);
+        return response(__('response.user_logged'), 200);
     }
 }

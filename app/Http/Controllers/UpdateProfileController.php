@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class UpdateProfileController extends Controller
 {
     public function update(Request $request)
     {
+        App::setLocale($request->locale);
         $authUser = auth()->user();
         $user = User::firstWhere('email', $authUser->email);
 
@@ -26,6 +28,6 @@ class UpdateProfileController extends Controller
             $user->save();
         }
 
-        return response('Profile updated!', 200);
+        return response(__('response.profile_updated'), 200);
     }
 }
