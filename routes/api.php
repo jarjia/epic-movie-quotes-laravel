@@ -5,6 +5,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UpdateProfileController;
 use App\Models\Genre;
@@ -40,6 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['controller' => MovieController::class], function () {
         Route::post('/movie/create', 'store')->name('create.movie');
         Route::get('/movies', 'fetch')->name('fetch.movies');
+        Route::get('/movie', 'show')->name('fetch.movie');
+        Route::delete('/movie/delete/{movie}', 'destroy')->name('destroy.movie');
+        Route::post('/movie/update/{movieId}', 'update')->name('update.movie');
+        Route::get('/movie-for-quotes', 'getMoviesForQuote')->name('get.movies.for.quote');
+    });
+
+    Route::group(['controller' => QuoteController::class], function () {
+        Route::post('/quote/create', 'store')->name('create.quote');
     });
 
     Route::get('/genres', [GenresController::class, 'getGenres'])->name('get.genres');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use Dotenv\Util\Str;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -37,6 +38,7 @@ class MovieController extends Controller
         $search = $request->input('search');
         $movies = Movie::whereIn('user_id', [auth()->user()->id])
             ->where('movie->' . app()->getLocale(), 'like', '%' . $search . '%')
+            ->select('id', 'movie', 'thumbnail', 'releaseDate')
             ->get();
 
         $movies->each(function ($movie) {
@@ -44,6 +46,56 @@ class MovieController extends Controller
             $movie->thumbnail = $imageUrl;
         });
 
+        return response()->json(['movies' => $movies]);
+    }
+
+    public function show(Request $request): JsonResponse
+    {
+        App::setLocale($request->locale);
+        $movie = Movie::with('genres')->find($request->id);
+
+        $movie->thumbnail = asset('storage/' . $movie->thumbnail);
+
+        return response()->json($movie);
+    }
+
+    public function update(Movie $movieId, Request $request)
+    {
+        $attributes = [
+            'movie' => $request->movie,
+            'director' => $request->director,
+            'description' => $request->description,
+            'releaseDate' => $request->releaseDate,
+        ];
+
+        if ($request->hasFile('thumbnail')) {
+            $file = request()->file('thumbnail')->store('images', 'public');
+            $attributes['thumbnail'] = $file;
+        }
+
+        $movieId->update($attributes);
+
+        $genres = $request->genres;
+
+        $movieId->genres()->detach();
+
+        $genreIds = array_map('intval', $genres);
+
+        $movieId->genres()->sync($genreIds, false);
+
+        return response('Movie was updated!');
+    }
+
+    public function destroy(Movie $movie)
+    {
+        $movie->delete();
+
+        return response('Movie was deleted');
+    }
+
+    public function getMoviesForQuote(): JsonResponse
+    {
+        $movies = Movie::select('id', 'movie')->get();
         return response()->json($movies);
     }
 }
