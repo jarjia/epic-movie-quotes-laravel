@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RegisterController;
@@ -48,7 +50,20 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::group(['controller' => QuoteController::class], function () {
+        Route::get('/movie/quotes', 'getQuotesForMovie')->name('get.quote.for.movie');
         Route::post('/quote/create', 'store')->name('create.quote');
+        Route::get('/movie/quote', 'getQuote')->name('get.quote');
+        Route::delete('/quote/delete/{quote}', 'destroy')->name('destroy.quote');
+        Route::post('/quote/update/{quote}', 'update')->name('update.quote');
+        Route::get('/quotes/all', 'all')->name('get.all.quotes');
+    });
+
+    Route::group(['controller' => CommentController::class, 'prefix' => '/comment'], function () {
+        Route::post('/create', 'store')->name('comment.create');
+    });
+
+    Route::group(['controller' => LikeController::class, 'prefix' => '/like'], function () {
+        Route::post('/create', 'store')->name('like.create');
     });
 
     Route::get('/genres', [GenresController::class, 'getGenres'])->name('get.genres');
