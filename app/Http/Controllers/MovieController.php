@@ -52,11 +52,16 @@ class MovieController extends Controller
     public function show(Request $request): JsonResponse
     {
         App::setLocale($request->locale);
-        $movie = Movie::with('genres')->find($request->id);
+        $movie = Movie::whereIn('user_id', [auth()->user()->id])
+            ->with('genres')->find($request->id);
 
-        $movie->thumbnail = asset('storage/' . $movie->thumbnail);
+        if ($movie !== null) {
+            $movie->thumbnail = asset('storage/' . $movie->thumbnail);
 
-        return response()->json($movie);
+            return response()->json($movie);
+        }
+
+        return response()->json('Movie does not exist', 500);
     }
 
     public function update(Movie $movieId, Request $request)
@@ -95,7 +100,9 @@ class MovieController extends Controller
 
     public function getMoviesForQuote(): JsonResponse
     {
-        $movies = Movie::select('id', 'movie')->get();
+        $movies = Movie::whereIn('user_id', [auth()->user()->id])
+            ->select('id', 'movie')->get();
+
         return response()->json($movies);
     }
 }
