@@ -47,36 +47,43 @@ class Quote extends Model
         return $this->hasMany(Like::class);
     }
 
+    public function scopeWithMoviesLike($query, $search)
+    {
+        return $query->whereHas('movies', function ($query) use ($search) {
+            $query->where('movie->en', 'like', $search . '%')
+                ->orWhere('movie->ka', 'like', $search . '%');
+        });
+    }
+
+    public function scopeWithQuotesLike($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->where('quote->en', 'like', '%' . $search . '%')
+                ->orWhere('quote->ka', 'like', '%' . $search . '%');
+        });
+    }
+
     public static function searchQuotes($search, $paginate)
     {
         $search = trim($search);
         $searchString = substr($search, 1);
 
+        $query = self::query();
+
         if (Str::startsWith($search, '@')) {
-            return self::whereHas('movies', function ($query) use ($searchString) {
-                $query->where('movie->en', 'like', $searchString . '%')
-                    ->orWhere('movie->ka', 'like', $searchString . '%');
-            })->offset(0)->limit($paginate)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $query->withMoviesLike($searchString);
         } elseif (Str::startsWith($search, '#')) {
-            return self::where(function ($query) use ($searchString) {
-                $query->where('quote->en', 'like', '%' . $searchString . '%')
-                    ->orWhere('quote->ka', 'like', '%' . $searchString . '%');
-            })->offset(0)
-                ->limit($paginate)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $query->withQuotesLike($searchString);
         } else {
-            return self::whereHas('movies', function ($query) use ($search) {
-                $query->where('movie->en', 'like', $search . '%')
-                    ->orWhere('movie->ka', 'like', $search . '%');
-            })->orWhere('quote->en', 'like', '%' . $search . '%')
-                ->orWhere('quote->ka', 'like', '%' . $search . '%')
-                ->offset(0)
-                ->limit($paginate)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $query->withMoviesLike($search)
+                ->withQuotesLike($search);
         }
+
+        $quotes = $query->offset(0)
+            ->limit($paginate)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $quotes;
     }
 }

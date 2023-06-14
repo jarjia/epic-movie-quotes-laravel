@@ -16,7 +16,8 @@ class QuoteController extends Controller
     public function getQuotesForMovie(Request $request): JsonResponse
     {
         App::setLocale($request->locale);
-        $quotes = Quote::whereIn('movie_id', [intval($request->movieId)])
+        $quotes = Quote::with('comments.user', 'likes.user')
+            ->whereIn('movie_id', [intval($request->movieId)])
             ->select('quote', 'thumbnail', 'id', 'movie_id')
             ->get();
 
@@ -46,16 +47,10 @@ class QuoteController extends Controller
     {
         App::setLocale($request->locale);
 
-        $quote = Quote::firstWhere('id', [intval($request->quoteId)]);
+        $quote = Quote::with('comments.user', 'likes.user')->firstWhere('id', intval($request->quoteId));
+        $quote->thumbnail = asset('storage/' . $quote->thumbnail);
 
-        $quoteObj = [
-            'quote' => $quote->quote,
-            'movie_id' => $quote->movie_id,
-            'id' => $quote->id,
-            'thumbnail' => asset('storage/' . $quote->thumbnail)
-        ];
-
-        return response()->json($quoteObj);
+        return response()->json($quote);
     }
 
     public function update(Quote $quote, Request $request)
