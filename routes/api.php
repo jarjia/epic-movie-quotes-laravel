@@ -73,6 +73,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/logout', 'logout')->name('auth.logout');
     });
 
+    Route::group(['controller' => NotificationController::class], function () {
+        Route::get('/notifications', 'all')->name('get.all.notifications');
+        Route::get('/notifications/count', 'getNotSeen')->name('get.not.seen.notifications.count');
+        Route::post('/notifications/read-all', 'readAll')->name('read.all');
+        Route::patch('/read/notification/{notifyId}', 'read')->name('post.read.notification');
+    });
+
     Route::post('/profile/update', [UpdateProfileController::class, 'update'])->name('profile.update');
 });
 
