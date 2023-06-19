@@ -7,11 +7,10 @@ use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UpdateProfileController;
-use App\Models\Genre;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -71,6 +70,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['controller' => AuthController::class], function () {
         Route::get('/user', 'user')->name('auth.data');
         Route::get('/logout', 'logout')->name('auth.logout');
+    });
+
+    Route::group(['controller' => NotificationController::class], function () {
+        Route::get('/notifications', 'all')->name('get.all.notifications');
+        Route::get('/notifications/count', 'getNotSeen')->name('get.not.seen.notifications.count');
+        Route::post('/notifications/read-all', 'readAll')->name('read.all');
+        Route::patch('/read/notification/{notifyId}', 'read')->name('post.read.notification');
     });
 
     Route::post('/profile/update', [UpdateProfileController::class, 'update'])->name('profile.update');

@@ -7,11 +7,12 @@ use Dotenv\Util\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 
 class MovieController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
         App::setLocale($request->locale);
         $file = request()->file('thumbnail')->store('images', 'public');
@@ -36,7 +37,7 @@ class MovieController extends Controller
     {
         App::setLocale($request->locale);
         $search = $request->input('search');
-        $movies = Movie::whereIn('user_id', [auth()->user()->id])
+        $movies = Movie::with('quotes')->whereIn('user_id', [auth()->user()->id])
             ->where('movie->' . app()->getLocale(), 'like', '%' . $search . '%')
             ->select('id', 'movie', 'thumbnail', 'releaseDate')
             ->get();
@@ -64,7 +65,7 @@ class MovieController extends Controller
         return response()->json('Movie does not exist', 500);
     }
 
-    public function update(Movie $movieId, Request $request)
+    public function update(Movie $movieId, Request $request): Response
     {
         $attributes = [
             'movie' => $request->movie,
@@ -91,7 +92,7 @@ class MovieController extends Controller
         return response('Movie was updated!');
     }
 
-    public function destroy(Movie $movie)
+    public function destroy(Movie $movie): Response
     {
         $movie->delete();
 
