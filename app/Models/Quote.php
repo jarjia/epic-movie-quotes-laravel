@@ -47,26 +47,31 @@ class Quote extends Model
         return $this->hasMany(Like::class);
     }
 
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
     public function scopeWithMoviesLike($query, $search)
     {
         return $query->whereHas('movies', function ($query) use ($search) {
-            $query->where('movie->en', 'like', $search . '%')
-                ->orWhere('movie->ka', 'like', $search . '%');
+            $query->whereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
+                ->orWhereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
         });
     }
 
     public function scopeWithQuotesLike($query, $search)
     {
-        return $query->where(function ($query) use ($search) {
-            $query->where('quote->en', 'like', '%' . $search . '%')
-                ->orWhere('quote->ka', 'like', '%' . $search . '%');
+        return $query->orWhere(function ($query) use ($search) {
+            $query->whereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
+                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
         });
     }
 
     public static function searchQuotes($search, $paginate)
     {
         $search = trim($search);
-        $searchString = substr($search, 1);
+        $searchString = trim(substr($search, 1));
 
         $query = self::query();
 
