@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::group(['controller' => UpdateProfileController::class], function () {
         Route::post('/profile/update', 'update')->name('profile.update');
-        Route::post('/update/email', 'UpdateEmail')->name('email');
+        Route::post('/email', 'UpdateEmail')->name('email');
     });
 });
 
