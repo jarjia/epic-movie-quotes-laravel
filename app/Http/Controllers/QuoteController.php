@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuoteRequests\StoreQuoteRequest;
 use App\Models\Comment;
-use App\Models\Movie;
 use App\Models\Quote;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -89,8 +87,6 @@ class QuoteController extends Controller
         $quotes = Quote::searchQuotes($request->search, $request->paginate);
 
         foreach ($quotes as $quote) {
-            $comments = Comment::whereIn('quote_id', [$quote->id])->with('user')
-                ->orderBy('created_at', 'desc')->get();
             $userThumbnail = '';
             if (Str::startsWith($quote->movies->user->thumbnail, 'assets')) {
                 $userThumbnail = asset($quote->movies->user->thumbnail);
@@ -101,16 +97,12 @@ class QuoteController extends Controller
             $quote->movies->thumbnail = Str::startsWith($quote->movies->thumbnail, 'http') ?
                 $quote->movies->thumbnail : asset('storage/' . $quote->movies->thumbnail);
             $quote->movies->user->thumbnail = $userThumbnail;
-            $quote->comments = $comments;
             foreach ($quote->comments as $comment) {
                 if (Str::startsWith($comment->user->thumbnail, 'assets')) {
                     $comment->user->thumbnail = asset($comment->user->thumbnail);
                 } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
                     $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
                 }
-            }
-            foreach ($quote->likes as $like) {
-                $like = $like->user;
             }
         };
 

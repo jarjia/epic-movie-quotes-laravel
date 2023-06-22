@@ -55,16 +55,20 @@ class Quote extends Model
     public function scopeWithMoviesLike($query, $search)
     {
         return $query->whereHas('movies', function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(movie, "$.en")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(movie, "$.ka")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->where(function ($query) use ($search) {
+                $query->whereRaw('lower(movie->>"$.en") LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('lower(movie->>"$.ka") LIKE ?', ['%' . strtolower($search) . '%']);
+            });
         });
     }
 
     public function scopeWithQuotesLike($query, $search)
     {
         return $query->orWhere(function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->where(function ($query) use ($search) {
+                $query->whereRaw('lower(quote->>"$.en") LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('lower(quote->>"$.ka") LIKE ?', ['%' . strtolower($search) . '%']);
+            });
         });
     }
 
@@ -87,6 +91,7 @@ class Quote extends Model
         $quotes = $query->offset(0)
             ->limit($paginate)
             ->orderBy('created_at', 'desc')
+            ->with('likes.user')
             ->get();
 
         return $quotes;
