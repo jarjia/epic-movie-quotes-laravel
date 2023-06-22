@@ -45,6 +45,7 @@ class GoogleAuthController extends Controller
             $user->name = $googleUser->name;
             $user->google_id = $googleUser->getId();
             $user->thumbnail = 'images/' . $profile;
+            $user->email_verified_at = now();
             $user->save();
         }
 
