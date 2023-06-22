@@ -55,16 +55,16 @@ class Quote extends Model
     public function scopeWithMoviesLike($query, $search)
     {
         return $query->whereHas('movies', function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->where('movie->en', 'LIKE', '%' . $search . '%')
+                ->orWhere('movie->ka', 'LIKE', '%' . $search . '%');
         });
     }
 
     public function scopeWithQuotesLike($query, $search)
     {
         return $query->orWhere(function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->where('quote->en', 'LIKE', '%' . $search . '%')
+                ->orWhere('quote->ka', 'LIKE', '%' . $search . '%');
         });
     }
 
@@ -87,6 +87,7 @@ class Quote extends Model
         $quotes = $query->offset(0)
             ->limit($paginate)
             ->orderBy('created_at', 'desc')
+            ->with('likes.user')
             ->get();
 
         return $quotes;

@@ -16,6 +16,7 @@ class PostCommentRequest extends FormRequest
         return [
             'comment' => 'required',
             'quote_id' => 'required',
+            'to_user' => 'required'
         ];
     }
 }

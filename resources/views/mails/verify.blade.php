@@ -24,7 +24,7 @@
             <div style="margin: 30px 3%">
                 <div>
                     <a style="background-color: #E31221; border-radius: 4px; padding: 10px 30px; text-decoration:none; color:white;" 
-                    href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}">
+                    href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}">
                     {{__('mail.verify_button')}}</a>
                 </div>
             </div>
@@ -35,8 +35,8 @@
             </div>
             <div style="margin: 30px 3%; width: 80%; height: 20%;">
                 <p style="word-wrap: break-word;">
-                    <a href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}" style="color: #DDCCAA;">
-                        {{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&email='.$user->email}}
+                    <a href="{{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}" style="color: #DDCCAA;">
+                        {{config('app.front_url').'/?token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}
                     </a>
                 </p>
             </div>

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\QuoteRequests\StoreQuoteRequest;
 use App\Models\Comment;
-use App\Models\Movie;
 use App\Models\Quote;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -31,14 +30,17 @@ class QuoteController extends Controller
         return response()->json($quotes);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreQuoteRequest $request): JsonResponse
     {
+        $attributes = $request->validated();
+
         App::setLocale($request->locale);
+
         $file = request()->file('thumbnail')->store('images', 'public');
 
         $quote = Quote::create([
-            'quote' => $request->quote,
-            'movie_id' => $request->movieId,
+            'quote' => $attributes['quote'],
+            'movie_id' => $attributes['movieId'],
             'thumbnail' => $file
         ]);
 
@@ -52,6 +54,13 @@ class QuoteController extends Controller
         $quote = Quote::with('comments.user', 'likes.user', 'movies.user')->firstWhere('id', intval($request->quoteId));
         $quote->thumbnail = asset('storage/' . $quote->thumbnail);
         $quote['user_id'] = $quote->movies->user_id;
+        foreach ($quote->comments as $comment) {
+            if (Str::startsWith($comment->user->thumbnail, 'assets')) {
+                $comment->user->thumbnail = asset($comment->user->thumbnail);
+            } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
+                $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
+            }
+        }
 
         return response()->json($quote);
     }
@@ -78,25 +87,22 @@ class QuoteController extends Controller
         $quotes = Quote::searchQuotes($request->search, $request->paginate);
 
         foreach ($quotes as $quote) {
-            $comments = Comment::whereIn('quote_id', [$quote->id])->with('user')
-                ->orderBy('created_at', 'desc')->get();
             $userThumbnail = '';
-            if (Str::startsWith($quote->movies->user->thumbnail, 'http')) {
-                $userThumbnail = $quote->movies->user->thumbnail;
+            if (Str::startsWith($quote->movies->user->thumbnail, 'assets')) {
+                $userThumbnail = asset($quote->movies->user->thumbnail);
             } else {
-                if ($quote->movies->user->thumbnail === null) {
-                    $userThumbnail = null;
-                } else {
-                    $userThumbnail = asset('storage/' . $quote->movies->user->thumbnail);
-                }
+                $userThumbnail = asset('storage/' . $quote->movies->user->thumbnail);
             }
             $quote['thumbnail'] = asset('storage/' . $quote->thumbnail);
             $quote->movies->thumbnail = Str::startsWith($quote->movies->thumbnail, 'http') ?
                 $quote->movies->thumbnail : asset('storage/' . $quote->movies->thumbnail);
             $quote->movies->user->thumbnail = $userThumbnail;
-            $quote->comments = $comments;
-            foreach ($quote->likes as $like) {
-                $like = $like->user;
+            foreach ($quote->comments as $comment) {
+                if (Str::startsWith($comment->user->thumbnail, 'assets')) {
+                    $comment->user->thumbnail = asset($comment->user->thumbnail);
+                } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
+                    $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
+                }
             }
         };
 

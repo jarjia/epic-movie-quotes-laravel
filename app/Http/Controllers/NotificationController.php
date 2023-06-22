@@ -15,6 +15,14 @@ class NotificationController extends Controller
             ->offset(0)->limit($request->paginate)
             ->orderBy('created_at', 'desc')->get();
 
+        foreach ($notifications as $notification) {
+            if (strpos($notification->from->thumbnail, 'assets') === 0) {
+                $notification->from->thumbnail = asset($notification->from->thumbnail);
+            } elseif (strpos($notification->from->thumbnail, 'images') === 0) {
+                $notification->from->thumbnail = asset('storage/' . $notification->from->thumbnail);
+            }
+        }
+
         return response()->json([
             'notifications' => $notifications,
             'cur_page' => $request->paginate,

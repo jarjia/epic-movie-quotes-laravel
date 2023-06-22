@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MovieRequests\StoreMovieRequest;
+use App\Http\Requests\MovieRequests\UpdateMovieRequest;
 use App\Models\Movie;
 use Dotenv\Util\Str;
 use Illuminate\Http\JsonResponse;
@@ -12,21 +14,24 @@ use Illuminate\Support\Facades\App;
 
 class MovieController extends Controller
 {
-    public function store(Request $request): Response
+    public function store(StoreMovieRequest $request): Response
     {
-        App::setLocale($request->locale);
+        $attributes = $request->validated();
+
         $file = request()->file('thumbnail')->store('images', 'public');
 
+        App::setLocale($attributes['locale']);
+
         $movie = Movie::create([
-            'movie' => $request->movie,
-            'director' => $request->director,
-            'description' => $request->description,
-            'releaseDate' => $request->releaseDate,
+            'movie' => $attributes['movie'],
+            'director' => $attributes['director'],
+            'description' => $attributes['description'],
+            'releaseDate' => $attributes['releaseDate'],
             'thumbnail' => $file,
-            'user_id' => $request->user_id
+            'user_id' => $attributes['user_id']
         ]);
 
-        $genres = $request->genres;
+        $genres = $attributes['genres'];
 
         $movie->genres()->sync($genres);
 
@@ -65,23 +70,25 @@ class MovieController extends Controller
         return response()->json('Movie does not exist', 500);
     }
 
-    public function update(Movie $movieId, Request $request): Response
+    public function update(Movie $movieId, UpdateMovieRequest $request): Response
     {
-        $attributes = [
-            'movie' => $request->movie,
-            'director' => $request->director,
-            'description' => $request->description,
-            'releaseDate' => $request->releaseDate,
+        $attributes = $request->validated();
+
+        $data = [
+            'movie' => $attributes['movie'],
+            'director' => $attributes['director'],
+            'description' => $attributes['description'],
+            'releaseDate' => $attributes['releaseDate'],
         ];
 
         if ($request->hasFile('thumbnail')) {
             $file = request()->file('thumbnail')->store('images', 'public');
-            $attributes['thumbnail'] = $file;
+            $data['thumbnail'] = $file;
         }
 
-        $movieId->update($attributes);
+        $movieId->update($data);
 
-        $genres = $request->genres;
+        $genres = $attributes['genres'];
 
         $movieId->genres()->detach();
 

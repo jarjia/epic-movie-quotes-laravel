@@ -3,10 +3,10 @@
 namespace App\Http\Requests\AuthRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 
-class PasswordRecoverRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,10 +14,15 @@ class PasswordRecoverRequest extends FormRequest
      */
     public function rules(): array
     {
+        $locale = $this->input('locale');
+
+        App::setLocale($locale);
+
         return [
-            'email' => 'required',
-            'recover_token' => 'required',
-            'password' => 'required'
+            'name'      => 'required',
+            'email'     => 'required|unique:users,email',
+            'password'  => 'required',
+            'locale' => 'required'
         ];
     }
 }

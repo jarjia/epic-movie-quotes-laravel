@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\AuthRequests;
+namespace App\Http\Requests\QuoteRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 
-class PasswordRecoverRequest extends FormRequest
+class StoreQuoteRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,10 +14,11 @@ class PasswordRecoverRequest extends FormRequest
      */
     public function rules(): array
     {
+        App::setLocale($this->input('locale'));
+
         return [
-            'email' => 'required',
-            'recover_token' => 'required',
-            'password' => 'required'
+            'quote' => 'required',
+            'movieId' => 'required',
         ];
     }
 }

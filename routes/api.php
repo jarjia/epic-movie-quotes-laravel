@@ -79,7 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/read/notification/{notifyId}', 'read')->name('post.read.notification');
     });
 
-    Route::post('/profile/update', [UpdateProfileController::class, 'update'])->name('profile.update');
+    Route::group(['controller' => UpdateProfileController::class], function () {
+        Route::post('/profile/update', 'update')->name('profile.update');
+        Route::post('/email', 'UpdateEmail')->name('email');
+    });
 });
 
 Route::group(['prefix' => '/auth/google', 'controller' => GoogleAuthController::class], function () {

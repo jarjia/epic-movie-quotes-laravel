@@ -5,7 +5,7 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'front_url' => env('FRONT_URL', 'http://localhost:3000'),
+    'front_url' => env('FRONT_URL'),
 
     /*
     |--------------------------------------------------------------------------

@@ -3,26 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\App;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class GoogleAuthController extends Controller
 {
-    public function redirect()
+    public function redirect(): string
     {
         return Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
     }
 
-    public function callback()
+    public function callback(): Response
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
         $user = User::firstWhere('email', $googleUser->email);
+
+        $imageUrl = $googleUser->avatar;
+
+        $response = Http::get($imageUrl);
+
+        $profile = Str::random(20) . '.png';
+
+        if ($response->successful()) {
+            Storage::disk('public')->put('images/' . $profile, $response->body());
+        }
+
         if ($user === null) {
             $user = User::Create([
                 'name' => $googleUser->name,
                 'email' => $googleUser->email,
                 'google_id' => $googleUser->getId(),
-                'thumbnail' => $googleUser->avatar
+                'thumbnail' => 'images/' . $profile
             ]);
 
             $user->email_verified_at = now();
@@ -30,7 +44,8 @@ class GoogleAuthController extends Controller
         } else {
             $user->name = $googleUser->name;
             $user->google_id = $googleUser->getId();
-            $user->thumbnail = $googleUser->avatar;
+            $user->thumbnail = 'images/' . $profile;
+            $user->email_verified_at = now();
             $user->save();
         }
 
