@@ -8,5 +8,6 @@ return [
     'verify_h3' => 'If you have any problems, please contact us:',
     'recover_hello' => 'Hola again',
     'recover_button' => 'Recover password',
-    'recover_h1' => 'You can recover your password by clicking this button:'
+    'recover_h1' => 'You can recover your password by clicking this button:',
+    'update_email_h1' => 'Please click the button below to verify your new email:'
 ];
