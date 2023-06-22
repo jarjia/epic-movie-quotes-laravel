@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request): Response
     {
         App::setLocale($request->locale);
         $remember = $request->boolean('remember_me');
@@ -22,24 +24,20 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($attributes, $remember)) {
-            return response()->json(Auth::user(), 201);
+            return response('User Logged in', 200);
         }
 
         return response(__('response.user_login_error'), 401);
     }
 
-    public function user()
+    public function user(): JsonResponse
     {
         $user = auth()->user();
         $userImage = '';
-        if (strpos($user->thumbnail, "http") === 0) {
-            $userImage = $user->thumbnail;
+        if (strpos($user->thumbnail, 'assets') === 0) {
+            $userImage = asset($user->thumbnail);
         } else {
-            if ($user->thumbnail === null) {
-                $userImage = null;
-            } else {
-                $userImage = asset('storage/' . $user->thumbnail);
-            }
+            $userImage = asset('storage/' . $user->thumbnail);
         }
 
         $user = [
@@ -50,10 +48,10 @@ class AuthController extends Controller
             'google_id' => $user->google_id
         ];
 
-        return $user;
+        return response()->json($user);;
     }
 
-    public function logout()
+    public function logout(): void
     {
         Auth::guard('web')->logout();
     }

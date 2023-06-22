@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequests\RegisterRequest;
 use App\Http\Requests\AuthRequests\VerificationRequest;
 use App\Mail\VerificationEmail;
 use App\Models\User;
@@ -13,21 +14,22 @@ use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function store(RegisterRequest $request): JsonResponse
     {
-        App::setLocale($request->locale);
+        $attributes = $request->validated();
+
+        App::setLocale($attributes['locale']);
+
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => $request->password,
+            'name'      => $attributes['name'],
+            'email'     => $attributes['email'],
+            'password'  => $attributes['password'],
+            'thumbnail' => 'assets/user.png'
         ]);
 
         $token = sha1($user->email);
 
         $expires = now();
-
-        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-        $success['name'] =  $user->name;
 
         Mail::to($user->email)->send(new VerificationEmail($user, $expires, $token));
 
