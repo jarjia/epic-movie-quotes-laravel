@@ -2,6 +2,7 @@
 
 return [
     'movie_created' => 'Movie Created!',
+    'user_login_error' => 'User with this credentials does not exist',
     'user_registered' => 'User registered successfully!',
     'user_verified' => 'Email verified successfully!',
     'profile_updated' => 'Profile updated!',
