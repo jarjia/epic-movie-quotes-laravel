@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/profile/update', [UpdateProfileController::class, 'update'])->name('profile.update');
+    Route::post('/update/email', [UpdateProfileController::class, 'UpdateEmail'])->name('email,update');
 });
 
 Route::group(['prefix' => '/auth/google', 'controller' => GoogleAuthController::class], function () {
