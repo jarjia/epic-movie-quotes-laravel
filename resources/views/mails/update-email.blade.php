@@ -14,18 +14,18 @@
                 MOVIE QUOTES
             </div>
             <div style="margin: 30px 3%; width: 48%; height:10%">
-                <span style="color: white;">{{__('mail.recover_hello')}} {{$user->name}}!</span>
+                <span style="color: white;">{{__('mail.hello')}} {{$user->name}}!</span>
             </div>
             <div style="margin: 30px 3%; width: 80%; height:10%;">
                 <p style="color: white;">
-                   {{__('mail.recover_h1')}}
+                    {{__('mail.update_email_h1')}}
                 </p>
             </div>
             <div style="margin: 30px 3%">
                 <div>
                     <a style="background-color: #E31221; border-radius: 4px; padding: 10px 30px; text-decoration:none; color:white;" 
-                    href="{{config('app.front_url').'/?recover_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}">
-                    {{__('mail.recover_button')}}</a>
+                    href="{{config('app.front_url').'/profile/?update_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email.'&user_id='.$user->id}}">
+                    {{__('mail.verify_button')}}</a>
                 </div>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
@@ -35,14 +35,14 @@
             </div>
             <div style="margin: 30px 3%; width: 80%; height: 20%;">
                 <p style="word-wrap: break-word;">
-                    <a href="{{config('app.front_url').'/?recover_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}" style="color: #DDCCAA;">
-                        {{config('app.front_url').'/?recover_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email}}
+                    <a href="{{config('app.front_url').'/profile/?update_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email.'&user_id='.$user->id}}" style="color: #DDCCAA;">
+                        {{config('app.front_url').'/profile/?update_token='.$token.'&expires='.$expires.'&locale='.app()->getLocale().'&email='.$user->email.'&user_id='.$user->id}}
                     </a>
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
                 <p style="color: white;">
-                    {{__('mail.verify_h3')}} <span style="color: white;">support@moviequotes.ge</span>              
+                    {{__('mail.verify_h3')}} <a href="#" style="cursor: default; text-decoration: none; color: white;">support@moviequotes.ge</a>              
                 </p>
             </div>
             <div style="margin: 30px 3%; width: 80%;">
