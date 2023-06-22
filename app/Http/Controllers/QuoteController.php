@@ -56,6 +56,13 @@ class QuoteController extends Controller
         $quote = Quote::with('comments.user', 'likes.user', 'movies.user')->firstWhere('id', intval($request->quoteId));
         $quote->thumbnail = asset('storage/' . $quote->thumbnail);
         $quote['user_id'] = $quote->movies->user_id;
+        foreach ($quote->comments as $comment) {
+            if (Str::startsWith($comment->user->thumbnail, 'assets')) {
+                $comment->user->thumbnail = asset($comment->user->thumbnail);
+            } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
+                $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
+            }
+        }
 
         return response()->json($quote);
     }
