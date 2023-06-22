@@ -55,16 +55,16 @@ class Quote extends Model
     public function scopeWithMoviesLike($query, $search)
     {
         return $query->whereHas('movies', function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(movie, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->whereRaw('LOWER(JSON_EXTRACT(movie, "$.en")) like ?', ['"%' . strtolower($search) . '%"'])
+                ->orWhereRaw('LOWER(JSON_EXTRACT(movie, "$.ka")) like ?', ['"%' . strtolower($search) . '%"']);
         });
     }
 
     public function scopeWithQuotesLike($query, $search)
     {
         return $query->orWhere(function ($query) use ($search) {
-            $query->whereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"'])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.' . app()->getLocale() . '")) like ?', ['"%' . strtolower($search) . '%"']);
+            $query->whereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ['"%' . strtolower($search) . '%"'])
+                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ['"%' . strtolower($search) . '%"']);
         });
     }
 
