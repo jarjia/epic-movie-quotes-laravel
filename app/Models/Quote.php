@@ -55,20 +55,16 @@ class Quote extends Model
     public function scopeWithMoviesLike($query, $search)
     {
         return $query->whereHas('movies', function ($query) use ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->whereRaw('lower(movie->>"$.en") LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhereRaw('lower(movie->>"$.ka") LIKE ?', ['%' . strtolower($search) . '%']);
-            });
+            $query->where('movie->en', 'LIKE', '%' . $search . '%')
+                ->orWhere('movie->ka', 'LIKE', '%' . $search . '%');
         });
     }
 
     public function scopeWithQuotesLike($query, $search)
     {
         return $query->orWhere(function ($query) use ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->whereRaw('lower(quote->>"$.en") LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhereRaw('lower(quote->>"$.ka") LIKE ?', ['%' . strtolower($search) . '%']);
-            });
+            $query->where('quote->en', 'LIKE', '%' . $search . '%')
+                ->orWhere('quote->ka', 'LIKE', '%' . $search . '%');
         });
     }
 
