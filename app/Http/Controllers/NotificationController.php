@@ -11,11 +11,24 @@ class NotificationController extends Controller
 {
     public function all(Request $request): JsonResponse
     {
-        $notifications = Notification::with('from')->where('to_user', auth()->user()->id)
-            ->offset(0)->limit($request->paginate)
-            ->orderBy('created_at', 'desc')->get();
+        $filter = $request->filter;
+        $notifications = Notification::with('from')
+            ->where('to_user', auth()->user()->id)
+            ->offset(0)
+            ->limit($request->paginate)
+            ->orderBy('created_at', 'desc');
 
-        foreach ($notifications as $notification) {
+        if (!is_null($filter) && $filter !== '') {
+            if ($filter === 'new') {
+                $notifications->where('seen', '0');
+            } else {
+                $notifications->where('notification', $filter);
+            }
+        }
+
+        $filteredNotifications = $notifications->get();
+
+        foreach ($filteredNotifications as $notification) {
             if (strpos($notification->from->thumbnail, 'assets') === 0) {
                 $notification->from->thumbnail = asset($notification->from->thumbnail);
             } elseif (strpos($notification->from->thumbnail, 'images') === 0) {
@@ -24,7 +37,7 @@ class NotificationController extends Controller
         }
 
         return response()->json([
-            'notifications' => $notifications,
+            'notifications' => $filteredNotifications,
             'cur_page' => $request->paginate,
             'last_page' => Notification::where('to_user', auth()->user()->id)->get()->count()
         ]);
