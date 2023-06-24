@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\UpdateEmailMail;
-use App\Mail\VerificationEmail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,7 +10,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Redis;
 
 class UpdateProfileController extends Controller
 {
@@ -21,15 +19,6 @@ class UpdateProfileController extends Controller
         $authUser = auth()->user();
         $user = User::firstWhere('email', $authUser->email);
 
-        if ($request->name !== null) {
-            $user->name = $request->name;
-            $user->save();
-        }
-        if ($request->thumbnail !== null) {
-            $file = request()->file('thumbnail')->store('images', 'public');
-            $user->thumbnail = $file;
-            $user->save();
-        }
         if ($request->password !== null) {
             $attributes = $request->validate([
                 'password' => 'required'
@@ -42,7 +31,17 @@ class UpdateProfileController extends Controller
             $user->save();
         }
 
-        if ($request->email !== null) {
+        if ($request->name !== null) {
+            $user->name = $request->name;
+            $user->save();
+        }
+        if ($request->thumbnail !== null) {
+            $file = request()->file('thumbnail')->store('images', 'public');
+            $user->thumbnail = $file;
+            $user->save();
+        }
+
+        if ($request->email !== null && auth()->user()->google_id === null) {
             $attributes = $request->validate([
                 'email' => 'required|unique:users,email'
             ]);

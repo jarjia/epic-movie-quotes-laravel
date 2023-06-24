@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,6 +25,10 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($attributes, $remember)) {
+            $user = User::firstWhere('id', auth()->user()->id);
+            $user->google_id = null;
+            $user->save();
+
             return response('User Logged in', 200);
         }
 
