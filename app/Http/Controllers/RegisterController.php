@@ -6,8 +6,6 @@ use App\Http\Requests\AuthRequests\RegisterRequest;
 use App\Http\Requests\AuthRequests\VerificationRequest;
 use App\Mail\VerificationEmail;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;

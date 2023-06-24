@@ -7,8 +7,6 @@ use App\Events\QuoteLiked;
 use App\Http\Requests\LikeRequests\LikeRequest;
 use App\Models\Like;
 use App\Models\Notification;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class LikeController extends Controller
 {
