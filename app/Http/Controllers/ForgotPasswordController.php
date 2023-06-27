@@ -23,7 +23,7 @@ class ForgotPasswordController extends Controller
         $expires = now();
 
         if ($user === null) {
-            return response()->json(__('response.email_not_found'), 401);
+            return response()->json(['email' => __('response.email_not_found')], 401);
         } else {
             Mail::to($user->email)->send(new PasswordRecoverMail($user, $expires, $token));
 
@@ -39,16 +39,16 @@ class ForgotPasswordController extends Controller
         $isSamePassword = Hash::check($attributes['password'], $user->password);
 
         if ($isSamePassword) {
-            return response()->json(['message' => __('response.same_password')], 422);
+            return response()->json(['password' => __('response.same_password')], 422);
         }
 
         if (sha1($user->email) === $attributes['recover_token']) {
             $user->password = $attributes['password'];
             $user->save();
         } else {
-            return response()->json(['message' => __('response.error_password')]);
+            return response()->json(['password' => __('response.error_password')]);
         }
 
-        return response()->json(['message' => __('response.success_password')]);
+        return response()->json(['password' => __('response.success_password')]);
     }
 }
