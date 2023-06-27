@@ -19,16 +19,46 @@ class UpdateProfileController extends Controller
         $authUser = auth()->user();
         $user = User::firstWhere('email', $authUser->email);
 
+        if ($request->password !== null && $request->email !== null && auth()->user()->google_id === null) {
+            $attributes = $request->validate([
+                'password' => 'required',
+                'email' => 'required|unique:users,email'
+            ]);
+            $isSamePassword = Hash::check($attributes['password'], $user->password);
+            if ($isSamePassword) {
+                return response()->json(['password' => __('response.same_password')], 422);
+            }
+        }
+
         if ($request->password !== null) {
             $attributes = $request->validate([
                 'password' => 'required'
             ]);
+
             $isSamePassword = Hash::check($attributes['password'], $user->password);
             if ($isSamePassword) {
-                return response()->json(['message' => __('response.same_password')], 422);
+                return response()->json(['password' => __('response.same_password')], 422);
             }
+
             $user->password = $request->password;
             $user->save();
+        }
+
+        if ($request->email !== null && auth()->user()->google_id === null) {
+            $attributes = $request->validate([
+                'email' => 'required|unique:users,email'
+            ]);
+
+            $token = sha1($attributes['email']);
+
+            $expires = now();
+            $userData = (object)[
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $attributes['email']
+            ];
+
+            Mail::to($attributes['email'])->send(new UpdateEmailMail($userData, $expires, $token));
         }
 
         if ($request->name !== null) {
@@ -39,19 +69,6 @@ class UpdateProfileController extends Controller
             $file = request()->file('thumbnail')->store('images', 'public');
             $user->thumbnail = $file;
             $user->save();
-        }
-
-        if ($request->email !== null && auth()->user()->google_id === null) {
-            $attributes = $request->validate([
-                'email' => 'required|unique:users,email'
-            ]);
-            $token = sha1($attributes['email']);
-
-            $expires = now();
-            $userData = $user;
-            $userData['email'] = $attributes['email'];
-
-            Mail::to($attributes['email'])->send(new UpdateEmailMail($userData, $expires, $token));
         }
 
         return response(__('response.profile_updated'), 200);
@@ -67,7 +84,7 @@ class UpdateProfileController extends Controller
                 'email_verified_at' => now(),
             ]);
         } else {
-            return response()->json('something went wrong!');
+            return response()->json('Something went wrong!');
         }
 
         return response()->json(['message' => __('response.user_verified')], 201);

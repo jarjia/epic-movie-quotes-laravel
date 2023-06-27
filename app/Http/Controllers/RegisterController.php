@@ -46,7 +46,7 @@ class RegisterController extends Controller
                 'email_verified_at' => now(),
             ]);
         } else {
-            return response()->json('something went wrong!');
+            return response()->json(['verify' => 'Something went wrong!']);
         }
 
         return response()->json(['message' => __('response.user_verified')], 201);

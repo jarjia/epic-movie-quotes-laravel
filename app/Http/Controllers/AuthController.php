@@ -17,11 +17,22 @@ class AuthController extends Controller
         $remember = $request->boolean('remember_me');
         $attributes = $request->only('password');
         $usernameOrEmail = $request->input('user');
+        $user = null;
 
         if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
             $attributes['email'] = $usernameOrEmail;
+            $user = User::firstWhere('email', $usernameOrEmail);
         } else {
             $attributes['name'] = $usernameOrEmail;
+            $user = User::firstWhere('name', $usernameOrEmail);
+        }
+
+        if ($user === null) {
+            return response(['user' => __('response.user_login_error')], 401);
+        } else {
+            if ($user->email_verified_at === null) {
+                return response(['user' => __('response.user_not_verified')], 401);
+            }
         }
 
         if (Auth::attempt($attributes, $remember)) {
@@ -32,7 +43,7 @@ class AuthController extends Controller
             return response('User Logged in', 200);
         }
 
-        return response(__('response.user_login_error'), 401);
+        return response(['user' => __('response.user_login_error')], 401);
     }
 
     public function user(): JsonResponse
