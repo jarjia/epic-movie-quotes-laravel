@@ -11,5 +11,6 @@ return [
     "success_password" => 'Password reseted successfuly!',
     "error_password" => 'Something went wrong when recovering password',
     "email_not_found" => 'User with this email could not be found.',
-    "email_recover_sent" => 'Password recover email sent successfuly!'
+    "email_recover_sent" => 'Password recover email sent successfuly!',
+    "user_not_verified" => 'Please verify your email before authorizing'
 ];
