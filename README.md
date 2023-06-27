@@ -1,6 +1,6 @@
 <div style="display:flex; align-items: center">
   <h1 style="position:relative; top: -6px" >Epic movie quotes</h1>
-</div>
+</div
 
 ---
 In epic movie quotes you can go through authorization with specific email or quickly authorize with google account. After authorization you are redirected to news feed page where you can see newest posts. You can update your credentials by going to profile page. You can also add movies and add quotes as posts which you can delete or modify however you want. You can also like and comment someone elses post and they will get your interaction to posts via notifications. This website has English and Georgian languages support.
@@ -26,7 +26,7 @@ In epic movie quotes you can go through authorization with specific email or qui
 #
 ### Tech Stack
 
-* <img src="readme/assets/laravel.png" height="18" style="position: relative; top: 4px" /> [Laravel@6.x](https://laravel.com/docs/6.x) - back-end framework
+* <img src="readme/assets/laravel.png" height="18" style="position: relative; top: 4px" /> [Laravel@10.11.0](https://laravel.com/) - back-end framework
 * <img src="readme/assets/spatie.png" height="19" style="position: relative; top: 4px" /> [Spatie Translatable](https://github.com/spatie/laravel-translatable) - package for translation
 * <img src="readme/assets/laravel.png" height="18" style="position: relative; top: 4px" /> [Laravel sanctum@3.2](https://laravel.com/docs/10.x/sanctum) - Laravel featherweight authentication system
 * <img src="readme/assets/laravel.png" height="18" style="position: relative; top: 4px" /> [Laravel socialite@5.6](https://laravel.com/docs/10.x/socialite) - Provides a way to authenticate with OAuth providers
@@ -81,44 +81,6 @@ And now you should provide **.env** file all the necessary environment variables
 >MAILGUN_DOMAIN=******
 
 >MAILGUN_SECRET=******
-
-#
-**Georgian Card:**
->MERCHANT_ID=******
-
->PAGE_ID=******
-
->ACCOUNT_ID=******
-
->BACK_URL_S=******
-
->BACK_URL_F=******
-
->REFUND_API_PASS=******
-
->CCY=******
-
-#
-**Twilio:**
->TWILIO_SID=******
-
->TWILIO_TOKEN=******
-
->TWILIO_FROM=******
-
-#
-**Maradit:**
->MARADIT_HTTPS=true
-
->MARADIT_USERNAME=******
-
->MARADIT_PASSWORD=******
-
-#
-**Google Cloud Messaging:**
->FCM_SERVER_KEY=******
-
->FCM_SENDER_ID=******
 
 after setting up **.env** file, execute:
 ```sh
