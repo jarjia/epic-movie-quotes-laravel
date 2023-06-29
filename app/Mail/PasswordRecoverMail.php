@@ -25,8 +25,14 @@ class PasswordRecoverMail extends Mailable
      */
     public function build()
     {
+        $imagePath = public_path('/assets/quote-icon.png');
+
         return $this->from(address: 'epic@moviequotes.com', name: 'Epic Movie Quotes')
             ->subject(subject: 'Recover Password')
-            ->view('mails.recover');
+            ->view('mails.recover')
+            ->attach($imagePath, [
+                'as' => 'quote-icon.png',
+                'mime' => 'quote-icon/png',
+            ]);
     }
 }
