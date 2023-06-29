@@ -4,7 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Comment;
 use App\Models\Genre;
+use App\Models\Like;
+use App\Models\Movie;
+use App\Models\Notification;
+use App\Models\Quote;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,15 +20,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $defaultGenres = config('epicmoviequotes.genres');
+        $user = User::factory()->create();
+        $fromUser = User::factory()->create();
+        $genres = Genre::pluck('id');
 
-        usort($defaultGenres, function ($a, $b) {
-            $locale = app()->getLocale();
-            return strcmp($a[$locale], $b[$locale]);
-        });
+        $movie = Movie::factory()->create(['user_id' => $user->id]);
 
-        foreach ($defaultGenres as $genreName) {
-            Genre::create(['genre' => $genreName]);
+        $movie->genres()->sync($genres);
+
+        $quotes = Quote::factory(3)->create(['movie_id' => $movie->id]);
+
+        foreach ($quotes as $quote) {
+            $comments = Comment::factory(1)->create(['quote_id' => $quote->id, 'user_id' => $fromUser->id]);
+            $likes = Like::factory(1)->create(['user_id' => $fromUser->id, 'quote_id' => $quote->id]);
+
+            foreach ($comments as $comment) {
+                Notification::factory()->create([
+                    'quote_id' => $comment->quote_id,
+                    'from_user' => $comment->user_id,
+                    'to_user' => $user->id,
+                    'notification' => 'comment'
+                ]);
+            }
+
+            foreach ($likes as $like) {
+                Notification::factory()->create([
+                    'quote_id' => $like->quote_id,
+                    'from_user' => $like->user_id,
+                    'to_user' => $user->id,
+                    'notification' => 'like'
+                ]);
+            }
         }
     }
 }
