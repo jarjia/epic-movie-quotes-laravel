@@ -3,9 +3,8 @@
 namespace App\Http\Requests\QuoteRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\App;
 
-class StoreQuoteRequest extends FormRequest
+class AllQuotesRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,11 +13,9 @@ class StoreQuoteRequest extends FormRequest
      */
     public function rules(): array
     {
-        App::setLocale($this->input('locale'));
-
         return [
-            'quote' => 'required',
-            'movieId' => 'required',
+            'search' => 'nullable',
+            'paginate' => 'required',
             'locale' => 'required'
         ];
     }

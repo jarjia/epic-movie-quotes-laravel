@@ -19,7 +19,7 @@ class RegisterRequest extends FormRequest
         App::setLocale($locale);
 
         return [
-            'name'      => 'required',
+            'name'      => 'required|unique:users,name',
             'email'     => 'required|unique:users,email',
             'password'  => 'required',
             'locale' => 'required'
