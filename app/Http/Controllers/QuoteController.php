@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\QuoteRequests\AllQuotesRequest;
+use App\Http\Requests\QuoteRequests\GetQuotesForMovieRequest;
 use App\Http\Requests\QuoteRequests\StoreQuoteRequest;
+use App\Http\Resources\AllQuoteResource;
+use App\Http\Resources\ShowQuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 
 class QuoteController extends Controller
 {
-    public function getQuotesForMovie(Request $request): JsonResponse
+    public function getQuotesForMovie(GetQuotesForMovieRequest $request): JsonResponse
     {
-        App::setLocale($request->locale);
+        $attributes = $request->validated();
+        App::setLocale($attributes['locale']);
         $quotes = Quote::with('comments.user', 'likes.user')
-            ->whereIn('movie_id', [intval($request->movieId)])
+            ->whereIn('movie_id', [intval($attributes['movieId'])])
             ->select('quote', 'thumbnail', 'id', 'movie_id')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -33,7 +37,7 @@ class QuoteController extends Controller
     {
         $attributes = $request->validated();
 
-        App::setLocale($request->locale);
+        App::setLocale($attributes['locale']);
 
         $file = request()->file('thumbnail')->store('images', 'public');
 
@@ -46,22 +50,13 @@ class QuoteController extends Controller
         return response()->json($quote);
     }
 
-    public function getQuote(Request $request): JsonResponse
+    public function show(int $quoteId): JsonResponse
     {
-        App::setLocale($request->locale);
+        $quote = Quote::with('comments.user', 'likes.user', 'movies.user')->firstWhere('id', intval($quoteId));
 
-        $quote = Quote::with('comments.user', 'likes.user', 'movies.user')->firstWhere('id', intval($request->quoteId));
-        $quote->thumbnail = asset('storage/' . $quote->thumbnail);
-        $quote['user_id'] = $quote->movies->user_id;
-        foreach ($quote->comments as $comment) {
-            if (Str::startsWith($comment->user->thumbnail, 'assets')) {
-                $comment->user->thumbnail = asset($comment->user->thumbnail);
-            } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
-                $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
-            }
-        }
+        $transformedQuote = new ShowQuoteResource($quote);
 
-        return response()->json($quote);
+        return response()->json($transformedQuote);
     }
 
     public function update(Quote $quote, Request $request): Response
@@ -80,38 +75,19 @@ class QuoteController extends Controller
         return response('Movie was updated!');
     }
 
-    public function all(Request $request): JsonResponse
+    public function index(AllQuotesRequest $request): JsonResponse
     {
-        App::setLocale($request->locale);
-        $quotes = Quote::searchQuotes($request->search, $request->paginate);
+        $attributes = $request->validated();
+        App::setLocale($attributes['locale']);
+        $quotes = Quote::searchQuotes($attributes['search'], $attributes['paginate']);
 
-        foreach ($quotes as $quote) {
-            $userThumbnail = '';
-            if (Str::startsWith($quote->movies->user->thumbnail, 'assets')) {
-                $userThumbnail = asset($quote->movies->user->thumbnail);
-            } else {
-                $userThumbnail = asset('storage/' . $quote->movies->user->thumbnail);
-            }
-            $quote['thumbnail'] = asset('storage/' . $quote->thumbnail);
-            $quote->movies->thumbnail = Str::startsWith($quote->movies->thumbnail, 'http') ?
-                $quote->movies->thumbnail : asset('storage/' . $quote->movies->thumbnail);
-            $quote->movies->user->thumbnail = $userThumbnail;
-            foreach ($quote->comments as $comment) {
-                if (Str::startsWith($comment->user->thumbnail, 'assets')) {
-                    $comment->user->thumbnail = asset($comment->user->thumbnail);
-                } else if (Str::startsWith($comment->user->thumbnail, 'images')) {
-                    $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
-                }
-            }
-        };
+        $transformedQuotes = new AllQuoteResource($quotes);
 
-        return response()->json(['quotes' => $quotes, 'last_page' => Quote::all()->count(), 'current_page' => $request->paginate]);
+        return response()->json(['quotes' => $transformedQuotes, 'last_page' => Quote::all()->count(), 'current_page' => $request->paginate]);
     }
 
-    public function destroy(Quote $quote, Request $request): Response
+    public function destroy(Quote $quote): Response
     {
-        App::setLocale($request->locale);
-
         $quote->delete();
 
         return response('Quote deleted', 200);

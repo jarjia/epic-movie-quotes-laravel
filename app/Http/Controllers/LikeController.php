@@ -79,7 +79,6 @@ class LikeController extends Controller
 
             foreach ($notifications as $notification) {
                 if (
-                    $notification->quote_id === $attributes['quoteId'] &&
                     $notification->from_user === auth()->user()->id && $notification->notification === 'like'
                 ) {
                     $deleteNotification = Notification::where('id', $notification->id);

@@ -30,7 +30,7 @@ class CommentController extends Controller
         $comment->user = auth()->user();
         if (strpos($comment->user->thumbnail, 'assets') === 0) {
             $comment->user->thumbnail = asset($comment->user->thumbnail);
-        } else if (strpos($comment->user->thumbnail, 'images') === 0) {
+        } elseif (strpos($comment->user->thumbnail, 'images') === 0) {
             $comment->user->thumbnail = asset('storage/' . $comment->user->thumbnail);
         }
 
