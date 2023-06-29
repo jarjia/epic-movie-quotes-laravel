@@ -8,7 +8,7 @@
     <body style="font-family: 'Roboto'; width:full; height:full; ">
         <div style="width: 100%; height: 100%; background-color: #181624; color:white; padding-top: 2rem; padding-bottom: 2rem;">
             <div style="margin: auto; width: 10%; font-weight: bold;">
-                <x-svg-quote />              
+                <img src="{{ $message->embed(public_path('/assets/quote-icon.png')) }}" alt="quote icon"/>              
             </div>
             <div style="margin: 0 auto 30px auto; margin-top:2%; width: 18%; height:10%; color:#DDCCAA;">
                 MOVIE QUOTES
