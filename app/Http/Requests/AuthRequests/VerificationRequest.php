@@ -15,7 +15,8 @@ class VerificationRequest extends FormRequest
     {
         return [
             'email' => 'required',
-            'token' => 'required'
+            'token' => 'required',
+            'expires' => 'required'
         ];
     }
 }

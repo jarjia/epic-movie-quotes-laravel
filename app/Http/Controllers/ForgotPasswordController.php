@@ -6,6 +6,7 @@ use App\Http\Requests\AuthRequests\PasswordEmailRecoverRequest;
 use App\Http\Requests\AuthRequests\PasswordRecoverRequest;
 use App\Mail\PasswordRecoverMail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +21,7 @@ class ForgotPasswordController extends Controller
 
         $token = sha1($attributes['email']);
         $user = User::firstWhere('email', $attributes['email']);
-        $expires = now();
+        $expires = Carbon::now()->addMinutes(2);
 
         if ($user === null) {
             return response()->json(['email' => __('response.email_not_found')], 401);
