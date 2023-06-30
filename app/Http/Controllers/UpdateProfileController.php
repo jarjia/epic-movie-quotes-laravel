@@ -6,6 +6,8 @@ use App\Http\Requests\AuthRequests\UpdateEmailRequest;
 use App\Http\Requests\AuthRequests\UpdateprofileRequest;
 use App\Mail\UpdateEmailMail;
 use App\Models\User;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
@@ -41,7 +43,7 @@ class UpdateProfileController extends Controller
         if (isset($attributes['email']) && auth()->user()->google_id === null) {
             $token = sha1($attributes['email']);
 
-            $expires = now();
+            $expires = Carbon::now()->addMinutes(30);
             $userData = (object)[
                 'id' => $user->id,
                 'name' => $user->name,
@@ -68,6 +70,12 @@ class UpdateProfileController extends Controller
     {
         $attributes = $request->validated();
         $user = User::where('id', $attributes['user_id']);
+        $cur = new DateTime();
+        $expires = new DateTime($attributes['expires']);
+
+        if($cur > $expires) {
+            return response()->json(['error' => 'Expired.'], 401);
+        }
 
         if (sha1($attributes['email']) === $attributes['update_token']) {
             $user->update([

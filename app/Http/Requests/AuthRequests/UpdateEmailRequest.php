@@ -16,7 +16,8 @@ class UpdateEmailRequest extends FormRequest
         return [
             'email' => 'required',
             'user_id' => 'required',
-            'update_token' => 'required'
+            'update_token' => 'required',
+            'expires' => 'required'
         ];
     }
 }
