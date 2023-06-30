@@ -17,10 +17,10 @@ In epic movie quotes you can go through authorization with specific email or qui
 #
 ### Prerequisites
 
-* <img src="readme/assets/php.svg" width="35" style="position: relative; top: 4px" /> *PHP@7.2 and up*
+* <img src="readme/assets/php.svg" width="35" style="position: relative; top: 4px" /> *PHP@8.2 and up*
 * <img src="readme/assets/mysql.png" width="35" style="position: relative; top: 4px" /> *MYSQL@8 and up*
-* <img src="readme/assets/npm.png" width="35" style="position: relative; top: 4px" /> *npm@6 and up*
-* <img src="readme/assets/composer.png" width="35" style="position: relative; top: 6px" /> *composer@2 and up*
+* <img src="readme/assets/npm.png" width="35" style="position: relative; top: 4px" /> *npm@9.5 and up*
+* <img src="readme/assets/composer.png" width="35" style="position: relative; top: 6px" /> *composer@2.5 and up*
 
 
 #
