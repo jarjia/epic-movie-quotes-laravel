@@ -39,22 +39,21 @@ Route::group(['controller' => AuthController::class], function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::group(['controller' => MovieController::class], function () {
-        Route::post('/movie/create', 'store')->name('create.movie');
-        Route::get('/movies', 'fetch')->name('fetch.movies');
-        Route::get('/movie', 'show')->name('fetch.movie');
-        Route::delete('/movie/delete/{movie}', 'destroy')->name('destroy.movie');
-        Route::post('/movie/update/{movieId}', 'update')->name('update.movie');
-        Route::get('/movie-for-quotes', 'getMoviesForQuote')->name('get.movies.for.quote');
+    Route::group(['controller' => QuoteController::class], function () {
+        Route::post('/quotes', 'store')->name('create.quote');
+        Route::get('quotes/{quoteId}', 'show')->name('get.quote');
+        Route::delete('/quote/{quote}', 'destroy')->name('destroy.quote');
+        Route::patch('/quote/{quote}', 'update')->name('update.quote');
+        Route::get('/quotes', 'index')->name('get.all.quotes');
     });
 
-    Route::group(['controller' => QuoteController::class], function () {
-        Route::get('/movie/quotes', 'getQuotesForMovie')->name('get.quote.for.movie');
-        Route::post('/quote/create', 'store')->name('create.quote');
-        Route::get('/movie/quote', 'getQuote')->name('get.quote');
-        Route::delete('/quote/delete/{quote}', 'destroy')->name('destroy.quote');
-        Route::post('/quote/update/{quote}', 'update')->name('update.quote');
-        Route::get('/quotes/all', 'all')->name('get.all.quotes');
+    Route::group(['controller' => MovieController::class], function () {
+        Route::post('/movies', 'store')->name('create.movie');
+        Route::get('/movies', 'index')->name('all.movies');
+        Route::get('/movie/titles', 'getMoviesForQuote')->name('get.movies.for.quote');
+        Route::get('/movie/{id}', 'show')->name('show.movie');
+        Route::delete('/movie/{movie}', 'destroy')->name('destroy.movie');
+        Route::patch('/movie/{movieId}', 'update')->name('update.movie');
     });
 
     Route::group(['controller' => CommentController::class, 'prefix' => '/comment'], function () {

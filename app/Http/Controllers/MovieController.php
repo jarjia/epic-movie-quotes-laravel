@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MovieRequests\AllMovieRequest;
+use App\Http\Requests\MovieRequests\ShowMovieRequest;
 use App\Http\Requests\MovieRequests\StoreMovieRequest;
 use App\Http\Requests\MovieRequests\UpdateMovieRequest;
+use App\Http\Resources\MovieResource;
+use App\Http\Resources\ShowMovieResource;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 
@@ -36,36 +39,37 @@ class MovieController extends Controller
         return response(__('response.movie_created'), 201);
     }
 
-    public function fetch(Request $request): JsonResponse
+    public function index(AllMovieRequest $request): JsonResponse
     {
-        App::setLocale($request->locale);
-        $search = $request->input('search');
+        $attributes = $request->validated();
+        App::setLocale($attributes['locale']);
         $movies = Movie::with('quotes')->whereIn('user_id', [auth()->user()->id])
-            ->where('movie->' . app()->getLocale(), 'like', '%' . $search . '%')
+            ->where('movie->' . app()->getLocale(), 'like', '%' . $attributes['search'] . '%')
             ->select('id', 'movie', 'thumbnail', 'releaseDate')
             ->get();
 
-        $movies->each(function ($movie) {
-            $imageUrl = asset('storage/' . $movie->thumbnail);
-            $movie->thumbnail = $imageUrl;
-        });
+        $transformedMovies = new MovieResource($movies);
 
-        return response()->json(['movies' => $movies]);
+        return response()->json(['movies' => $transformedMovies]);
     }
 
-    public function show(Request $request): JsonResponse
+    public function show(string | int $id, ShowMovieRequest $request): JsonResponse
     {
-        App::setLocale($request->locale);
+        $attributes = $request->validated();
+        App::setLocale($attributes['locale']);
         $movie = Movie::whereIn('user_id', [auth()->user()->id])
-            ->with('genres')->find($request->id);
+            ->with(['genres', 'quotes' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }, 'quotes.comments', 'quotes.likes'])
+            ->find($id);
 
         if ($movie !== null) {
-            $movie->thumbnail = asset('storage/' . $movie->thumbnail);
+            $transforemedMovies = new ShowMovieResource($movie);
 
-            return response()->json($movie);
+            return response()->json($transforemedMovies);
         }
 
-        return response()->json('Movie does not exist', 500);
+        return response()->json('Movie does not exist', 404);
     }
 
     public function update(Movie $movieId, UpdateMovieRequest $request): Response

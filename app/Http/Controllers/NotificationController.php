@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NotificationRequests\AllNotificationRequest;
+use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
-    public function all(Request $request): JsonResponse
+    public function all(AllNotificationRequest $request): JsonResponse
     {
+        $attributes = $request->validated();
         $filter = $request->filter;
         $notifications = Notification::with('from')
             ->where('to_user', auth()->user()->id)
             ->offset(0)
-            ->limit($request->paginate)
+            ->limit($attributes['paginate'])
             ->orderBy('created_at', 'desc');
 
         if (!is_null($filter) && $filter !== '') {
@@ -28,16 +30,10 @@ class NotificationController extends Controller
 
         $filteredNotifications = $notifications->get();
 
-        foreach ($filteredNotifications as $notification) {
-            if (strpos($notification->from->thumbnail, 'assets') === 0) {
-                $notification->from->thumbnail = asset($notification->from->thumbnail);
-            } elseif (strpos($notification->from->thumbnail, 'images') === 0) {
-                $notification->from->thumbnail = asset('storage/' . $notification->from->thumbnail);
-            }
-        }
+        $transformedNotifications = new NotificationResource($filteredNotifications);
 
         return response()->json([
-            'notifications' => $filteredNotifications,
+            'notifications' => $transformedNotifications,
             'cur_page' => $request->paginate,
             'last_page' => Notification::where('to_user', auth()->user()->id)->get()->count()
         ]);

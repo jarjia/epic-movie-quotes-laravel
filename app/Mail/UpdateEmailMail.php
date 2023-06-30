@@ -24,8 +24,14 @@ class UpdateEmailMail extends Mailable
      */
     public function build()
     {
+        $imagePath = public_path('/assets/quote-icon.png');
+
         return $this->from(address: 'epic@moviequotes.com', name: 'Epic Movie Quotes')
             ->subject(subject: 'Update Email')
-            ->view('mails.update-email');
+            ->view('mails.update-email')
+            ->attach($imagePath, [
+                'as' => 'quote-icon.png',
+                'mime' => 'quote-icon/png',
+            ]);
     }
 }

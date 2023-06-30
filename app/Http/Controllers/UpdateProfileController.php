@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequests\UpdateEmailRequest;
+use App\Http\Requests\AuthRequests\UpdateprofileRequest;
 use App\Mail\UpdateEmailMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
@@ -13,42 +14,31 @@ use Illuminate\Support\Facades\Mail;
 
 class UpdateProfileController extends Controller
 {
-    public function update(Request $request): Response | JsonResponse
+    public function update(UpdateprofileRequest $request): Response | JsonResponse
     {
-        App::setLocale($request->locale);
         $authUser = auth()->user();
         $user = User::firstWhere('email', $authUser->email);
+        $attributes = $request->validated();
+        App::setLocale($attributes['locale']);
 
-        if ($request->password !== null && $request->email !== null && auth()->user()->google_id === null) {
-            $attributes = $request->validate([
-                'password' => 'required',
-                'email' => 'required|unique:users,email'
-            ]);
+        if (isset($attributes['password']) && isset($attributes['email']) && auth()->user()->google_id === null) {
             $isSamePassword = Hash::check($attributes['password'], $user->password);
             if ($isSamePassword) {
                 return response()->json(['password' => __('response.same_password')], 422);
             }
         }
 
-        if ($request->password !== null) {
-            $attributes = $request->validate([
-                'password' => 'required'
-            ]);
-
+        if (isset($attributes['password'])) {
             $isSamePassword = Hash::check($attributes['password'], $user->password);
             if ($isSamePassword) {
                 return response()->json(['password' => __('response.same_password')], 422);
             }
 
-            $user->password = $request->password;
+            $user->password = $attributes['password'];
             $user->save();
         }
 
-        if ($request->email !== null && auth()->user()->google_id === null) {
-            $attributes = $request->validate([
-                'email' => 'required|unique:users,email'
-            ]);
-
+        if (isset($attributes['email']) && auth()->user()->google_id === null) {
             $token = sha1($attributes['email']);
 
             $expires = now();
@@ -61,11 +51,11 @@ class UpdateProfileController extends Controller
             Mail::to($attributes['email'])->send(new UpdateEmailMail($userData, $expires, $token));
         }
 
-        if ($request->name !== null) {
-            $user->name = $request->name;
+        if (isset($attributes['name'])) {
+            $user->name = $attributes['name'];
             $user->save();
         }
-        if ($request->thumbnail !== null) {
+        if (isset($attributes['thumbnail'])) {
             $file = request()->file('thumbnail')->store('images', 'public');
             $user->thumbnail = $file;
             $user->save();
@@ -74,13 +64,14 @@ class UpdateProfileController extends Controller
         return response(__('response.profile_updated'), 200);
     }
 
-    public function UpdateEmail(Request $request): JsonResponse
+    public function UpdateEmail(UpdateEmailRequest $request): JsonResponse
     {
-        $user = User::where('id', $request->user_id);
+        $attributes = $request->validated();
+        $user = User::where('id', $attributes['user_id']);
 
-        if (sha1($request->email) === $request->update_token) {
+        if (sha1($attributes['email']) === $attributes['update_token']) {
             $user->update([
-                'email' => $request->email,
+                'email' => $attributes['email'],
                 'email_verified_at' => now(),
             ]);
         } else {

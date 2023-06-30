@@ -25,7 +25,7 @@ class GoogleAuthController extends Controller
 
         $response = Http::get($imageUrl);
 
-        $profile = Str::random(20) . '.png';
+        $profile = basename($imageUrl) . '.png';
 
         if ($response->successful()) {
             Storage::disk('public')->put('images/' . $profile, $response->body());
@@ -40,12 +40,14 @@ class GoogleAuthController extends Controller
             ]);
 
             $user->email_verified_at = now();
+            $user->remember_token = Str::random(60);
             $user->save();
         } else {
             $user->name = $googleUser->name;
             $user->google_id = $googleUser->getId();
             $user->thumbnail = 'images/' . $profile;
             $user->email_verified_at = now();
+            $user->remember_token = Str::random(60);
             $user->save();
         }
 
