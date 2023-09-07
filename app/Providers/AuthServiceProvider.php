@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+
+use App\Models\Movie;
+use App\Models\Quote;
+use App\Policies\MoviePolicy;
+use App\Policies\QuotePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -13,7 +18,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Movie::class => MoviePolicy::class,
+        Quote::class => QuotePolicy::class
     ];
 
     /**

@@ -63,6 +63,8 @@ class MovieController extends Controller
             }, 'quotes.comments', 'quotes.likes'])
             ->find($id);
 
+        $this->authorize('accessMovie', $movie);
+
         if ($movie !== null) {
             $transforemedMovies = new ShowMovieResource($movie);
 
@@ -74,6 +76,8 @@ class MovieController extends Controller
 
     public function update(Movie $movieId, UpdateMovieRequest $request): Response
     {
+        $this->authorize('accessMovie', $movieId);
+
         $attributes = $request->validated();
 
         $data = [
@@ -103,6 +107,8 @@ class MovieController extends Controller
 
     public function destroy(Movie $movie): Response
     {
+        $this->authorize('accessMovie', $movie);
+
         $movie->delete();
 
         return response('Movie was deleted');

@@ -54,6 +54,8 @@ class QuoteController extends Controller
     {
         $quote = Quote::with('comments.user', 'likes.user', 'movies.user')->firstWhere('id', intval($quoteId));
 
+        $this->authorize('accessQuote', $quote);
+
         $transformedQuote = new ShowQuoteResource($quote);
 
         return response()->json($transformedQuote);
@@ -64,6 +66,8 @@ class QuoteController extends Controller
         $attributes = [
             'quote' => $request->quote,
         ];
+
+        $this->authorize('accessQuote', $quote);
 
         if ($request->hasFile('thumbnail')) {
             $file = request()->file('thumbnail')->store('images', 'public');
@@ -88,6 +92,8 @@ class QuoteController extends Controller
 
     public function destroy(Quote $quote): Response
     {
+        $this->authorize('accessQuote', $quote);
+
         $quote->delete();
 
         return response('Quote deleted', 200);
