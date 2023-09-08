@@ -12,6 +12,7 @@ use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 
 class MovieController extends Controller
 {
@@ -92,6 +93,10 @@ class MovieController extends Controller
             $data['thumbnail'] = $file;
         }
 
+        $oldFile = str_replace('images/', '', $movieId->thumbnail);
+
+        Storage::disk('public')->delete('/images/'.$oldFile);
+
         $movieId->update($data);
 
         $genres = $attributes['genres'];
@@ -108,6 +113,10 @@ class MovieController extends Controller
     public function destroy(Movie $movie): Response
     {
         $this->authorize('accessMovie', $movie);
+
+        $oldFile = str_replace('images/', '', $movie->thumbnail);
+
+        Storage::disk('public')->delete('/images/'.$oldFile);
 
         $movie->delete();
 

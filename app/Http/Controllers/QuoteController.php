@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 
 class QuoteController extends Controller
 {
@@ -74,6 +75,10 @@ class QuoteController extends Controller
             $attributes['thumbnail'] = $file;
         }
 
+        $oldFile = str_replace('images/', '', $quote->thumbnail);
+
+        Storage::disk('public')->delete('/images/'.$oldFile);
+
         $quote->update($attributes);
 
         return response('Movie was updated!');
@@ -93,6 +98,10 @@ class QuoteController extends Controller
     public function destroy(Quote $quote): Response
     {
         $this->authorize('accessQuote', $quote);
+
+        $oldFile = str_replace('images/', '', $quote->thumbnail);
+
+        Storage::disk('public')->delete('/images/'.$oldFile);
 
         $quote->delete();
 

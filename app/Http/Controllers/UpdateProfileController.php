@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateProfileController extends Controller
 {
@@ -58,6 +59,8 @@ class UpdateProfileController extends Controller
             $user->save();
         }
         if (isset($attributes['thumbnail'])) {
+            $oldFile = str_replace('images/', '', $user->thumbnail);
+            Storage::disk('public')->delete('/images/'.$oldFile);
             $file = request()->file('thumbnail')->store('images', 'public');
             $user->thumbnail = $file;
             $user->save();
