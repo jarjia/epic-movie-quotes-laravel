@@ -42,6 +42,7 @@ class CommentController extends Controller
                 'name' => $comment->user->name,
                 'thumbnail' => $comment->user->thumbnail
             ],
+            'created_at' => $comment->created_at,
             'comment' => $comment->comment
         ];
 
