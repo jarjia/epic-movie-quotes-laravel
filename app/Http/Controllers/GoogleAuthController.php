@@ -42,13 +42,15 @@ class GoogleAuthController extends Controller
             $user->email_verified_at = now();
             $user->remember_token = Str::random(60);
             $user->save();
-        } else {
+        } elseif($user->remember_token === null) {
             $user->name = $googleUser->name;
             $user->google_id = $googleUser->getId();
             $user->thumbnail = 'images/' . $profile;
             $user->email_verified_at = now();
             $user->remember_token = Str::random(60);
             $user->save();
+        } else {
+            return response(__('response.user_exists'), 403);
         }
 
         auth()->login($user);

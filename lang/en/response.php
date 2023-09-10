@@ -12,5 +12,6 @@ return [
     "error_password" => 'Something went wrong when recovering password',
     "email_not_found" => 'User with this email could not be found.',
     "email_recover_sent" => 'Password recover email sent successfuly!',
-    "user_not_verified" => 'Please verify your email before authorizing'
+    "user_not_verified" => 'Please verify your email before authorizing',
+    "user_exists" => 'User with this gmail already exists.'
 ];
