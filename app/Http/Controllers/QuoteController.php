@@ -71,13 +71,13 @@ class QuoteController extends Controller
         $this->authorize('accessQuote', $quote);
 
         if ($request->hasFile('thumbnail')) {
+            $oldFile = str_replace('images/', '', $quote->thumbnail);
+
+            Storage::disk('public')->delete('/images/'.$oldFile);
+
             $file = request()->file('thumbnail')->store('images', 'public');
             $attributes['thumbnail'] = $file;
         }
-
-        $oldFile = str_replace('images/', '', $quote->thumbnail);
-
-        Storage::disk('public')->delete('/images/'.$oldFile);
 
         $quote->update($attributes);
 

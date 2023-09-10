@@ -89,13 +89,13 @@ class MovieController extends Controller
         ];
 
         if ($request->hasFile('thumbnail')) {
+            $oldFile = str_replace('images/', '', $movieId->thumbnail);
+
+            Storage::disk('public')->delete('/images/'.$oldFile);
+
             $file = request()->file('thumbnail')->store('images', 'public');
             $data['thumbnail'] = $file;
         }
-
-        $oldFile = str_replace('images/', '', $movieId->thumbnail);
-
-        Storage::disk('public')->delete('/images/'.$oldFile);
 
         $movieId->update($data);
 
