@@ -1,5 +1,6 @@
 <?php
 
+use App\Broadcasting\OnlineChannel;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -16,3 +17,5 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('notification.{userId}', function ($user, $userId) {
     return $user->id === (int)$userId;
 });
+
+Broadcast::channel('online', OnlineChannel::class);

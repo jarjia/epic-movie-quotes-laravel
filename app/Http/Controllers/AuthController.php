@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequests\AuthRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UsersResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -46,6 +47,15 @@ class AuthController extends Controller
         }
 
         return response(['user' => __('response.user_login_error')], 401);
+    }
+
+    public function index()
+    {
+        $users = User::all();
+
+        $transformedUsers = new UsersResource($users);
+
+        return response()->json($transformedUsers);
     }
 
     public function user(): JsonResponse

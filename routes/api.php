@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['controller' => AuthController::class], function () {
         Route::get('/user', 'user')->name('auth.data');
         Route::get('/logout', 'logout')->name('auth.logout');
+        Route::get('/users', 'index')->name('all.users');
     });
 
     Route::group(['controller' => NotificationController::class], function () {
