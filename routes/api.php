@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\GenresController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LikeController;
@@ -82,6 +83,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['controller' => UpdateProfileController::class], function () {
         Route::post('/profile/update', 'update')->name('profile.update');
         Route::post('/email', 'UpdateEmail')->name('email');
+    });
+
+    Route::group(['controller' => FriendsController::class], function () {
+        Route::post('/friend/add', 'addFriend')->name('add.friend');
+        Route::post('/friend/reject', 'reject')->name('reject.friend');
+        Route::post('/friend/accept', 'accept')->name('approve.friend');
+        Route::get('/friend/index', 'index')->name('get.all.friend');
     });
 });
 

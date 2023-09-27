@@ -14,6 +14,7 @@ class Notification extends Model
         'from_user',
         'to_user',
         'quote_id',
+        'friend_id',
         'notification',
         'seen',
     ];

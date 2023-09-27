@@ -18,4 +18,8 @@ Broadcast::channel('notification.{userId}', function ($user, $userId) {
     return $user->id === (int)$userId;
 });
 
+Broadcast::channel('friend.{userId}', function ($user, $userId) {
+    return $user->id === (int)$userId;
+});
+
 Broadcast::channel('online', OnlineChannel::class);

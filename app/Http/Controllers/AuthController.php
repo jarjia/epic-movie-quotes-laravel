@@ -51,7 +51,14 @@ class AuthController extends Controller
 
     public function index()
     {
-        $users = User::all();
+        $users = User::where('id', '!=', auth()->user()->id)->get();
+
+        foreach ($users as $user) {
+            $friends = $user->friends;
+            foreach ($friends as $friend) {
+                $status = $friend->pivot->status;
+            }
+        }
 
         $transformedUsers = new UsersResource($users);
 

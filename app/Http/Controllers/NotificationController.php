@@ -51,7 +51,9 @@ class NotificationController extends Controller
         $notifications = Notification::where('to_user', auth()->user()->id)->get();
 
         foreach ($notifications as $notification) {
-            $notification->update(['seen' => 1]);
+            if($notification->notification !== 'friend-request') {
+                $notification->update(['seen' => 1]);
+            }
         }
 
         return response('All marked as read');
