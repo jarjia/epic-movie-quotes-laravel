@@ -51,7 +51,7 @@ class AuthController extends Controller
 
     public function index()
     {
-        $users = User::where('id', '!=', auth()->user()->id)->get();
+        $users = User::where('id', '!=', auth()->user()->id)->whereNotNull('email_verified_at')->get();
 
         foreach ($users as $user) {
             $friends = $user->friends;

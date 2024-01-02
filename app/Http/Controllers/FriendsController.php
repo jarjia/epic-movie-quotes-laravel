@@ -134,7 +134,7 @@ class FriendsController extends Controller
 
     public function index()
     {
-        $usersFriends = User::find(auth()->user()->id)->friends()->where('email_verified_at', '!=', null)->get();
+        $usersFriends = User::find(auth()->user()->id)->friends;
 
         $arr = [];
 
