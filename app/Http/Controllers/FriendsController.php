@@ -27,7 +27,7 @@ class FriendsController extends Controller
 
         $status = (object)[
             'to' => $request->to_id,
-            'activity' => true,        
+            'activity' => true,
             'refetchFriends' => true
         ];
 
@@ -134,7 +134,7 @@ class FriendsController extends Controller
 
     public function index()
     {
-        $usersFriends = User::find(auth()->user()->id)->friends;
+        $usersFriends = User::find(auth()->user()->id)->friends()->where('email_verified_at', '!=', null)->get();
 
         $arr = [];
 
